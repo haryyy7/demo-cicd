@@ -1,21 +1,27 @@
-name: CI Pipeline
+name: Docker CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t my-static-site ./compose-demo/web
+      - name: Build vote image
+        run: docker build -t voting-vote ./vote
 
-      - name: Verify image was created
-        run: docker images | grep my-static-site
+      - name: Build result image
+        run: docker build -t voting-result ./result
+
+      - name: Build worker image
+        run: docker build -t voting-worker ./worker
+
+      - name: Verify images
+        run: docker images
