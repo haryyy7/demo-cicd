@@ -14,14 +14,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build vote image
-        run: docker build -t voting-vote ./vote
+        run: docker build -t haryyy7/demo-cicd-vote:latest ./vote
 
       - name: Build result image
-        run: docker build -t voting-result ./result
+        run: docker build -t haryyy7/demo-cicd-result:latest ./result
 
       - name: Build worker image
-        run: docker build -t voting-worker ./worker
+        run: docker build -t haryyy7/demo-cicd-worker:latest ./worker
 
-      - name: Verify images
-        run: docker images
+      - name: Push vote image
+        run: docker push haryyy7/demo-cicd-vote:latest
+
+      - name: Push result image
+        run: docker push haryyy7/demo-cicd-result:latest
+
+      - name: Push worker image
+        run: docker push haryyy7/demo-cicd-worker:latest
