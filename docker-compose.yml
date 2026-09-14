@@ -4,7 +4,9 @@
 
 services:
   vote:
-    image: ${ECR_REGISTRY}/voting-app-vote:${IMAGE_TAG}
+    build: 
+      context: ./vote
+      target: dev
     depends_on:
       redis:
         condition: service_healthy
@@ -14,6 +16,8 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    volumes:
+     - ./vote:/usr/local/app
     ports:
       - "8080:80"
     networks:
@@ -21,10 +25,14 @@ services:
       - back-tier
 
   result:
-    image: ${ECR_REGISTRY}/voting-app-result:${IMAGE_TAG}
+    build: ./result
+    # use nodemon rather than node for local dev
+    entrypoint: nodemon --inspect=0.0.0.0 server.js
     depends_on:
       db:
         condition: service_healthy 
+    volumes:
+      - ./result:/usr/local/app
     ports:
       - "8081:80"
       - "127.0.0.1:9229:9229"
@@ -33,7 +41,8 @@ services:
       - back-tier
 
   worker:
-    image: ${ECR_REGISTRY}/voting-app-worker:${IMAGE_TAG}
+    build:
+      context: ./worker
     depends_on:
       redis:
         condition: service_healthy 
