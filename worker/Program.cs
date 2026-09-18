@@ -57,10 +57,7 @@ namespace Worker
                             Console.WriteLine("Reconnecting DB");
                             pgsql = OpenDbConnection(pgConnectionString);
                         }
-                        else
-                        { // Normal +1 vote requested
-                            UpdateVote(pgsql, vote.voter_id, vote.vote);
-                        }
+                        UpdateVote(pgsql, vote.voter_id, vote.vote);
                     }
                     else
                     {
